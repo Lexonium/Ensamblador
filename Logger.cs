@@ -108,7 +108,7 @@ namespace AutomataEnsamblador
                             byte[] ochobytes = new byte[8];
                             xint = Convert.ToInt32(x.ValorConstante);
                             ochobytes = BitConverter.GetBytes(xint);
-                            for (i = 0; i < ochobytes.Length; i++)
+                            for (i = 0; i < 8; i++)
                             {
                                 codigoCompleto.Add(ochobytes[i]);
                                 //eightbytes[i] = Convert.ToString(ochobytes[i]);
@@ -167,7 +167,7 @@ namespace AutomataEnsamblador
         }
         public void PrintTSNV(List<ElementoSegmentoDeDatos> listaSegmentos)
         {
-            int i = 0, temp;
+            int i = 0, temp=0;
             string[] thirtybytes = new string[30], twobytes = new string[2];
             byte[] unbyte = new byte[1];
             byte[] treintabytes = new byte[30];
@@ -179,28 +179,33 @@ namespace AutomataEnsamblador
             foreach (var x in listaSegmentos)
             {
                 i = 0;
-                if (x.VariableName.Length < 30) {
-                    while (x.VariableName.Length < 30) {
-                        x.VariableName += '0';
-                    }
-                }
+                
                  treintabytes = Encoding.ASCII.GetBytes(x.VariableName);
                 for (i=0;i<treintabytes.Length;i++) {
                     tsnvEnBytes.Add(treintabytes[i]);
                 }
+                if (treintabytes.Length < 30)
+                {
+                    i = x.VariableName.Length;
+                    while (i < 30)
+                    {
+                        tsnvEnBytes.Add(BitConverter.GetBytes(temp)[0]);
+                        i++;
+                    }
+                }
                 dosbytes = BitConverter.GetBytes(x.Direccion);
-                for (i = 0; i < dosbytes.Length; i++)
+                for (i = 0; i < 2; i++)
                 {
                     tsnvEnBytes.Add(dosbytes[i]);
                 }
                 unbyte = BitConverter.GetBytes(x.VariableType);
                 tsnvEnBytes.Add(unbyte[0]);
                 dosbytes = BitConverter.GetBytes(Convert.ToInt32(x.NumElementos));
-                for (i = 0; i < dosbytes.Length; i++) {
+                for (i = 0; i < 2; i++) {
                     tsnvEnBytes.Add(dosbytes[i]);
                 }
                 dosbytes = BitConverter.GetBytes(Convert.ToInt32(x.VectorString));
-                for (i = 0; i < dosbytes.Length; i++)
+                for (i = 0; i < 2; i++)
                 {
                     tsnvEnBytes.Add(dosbytes[i]);
                 }
