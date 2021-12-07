@@ -14,7 +14,7 @@ namespace AutomataEnsamblador
             cheang.Run();
             
             // Suspend the screen.  
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }
