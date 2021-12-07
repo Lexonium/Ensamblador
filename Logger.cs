@@ -140,7 +140,9 @@ namespace AutomataEnsamblador
                     //}
                     //tieneconst = false;
                     //tienevar = false;
-                    byte[] mensaje= Encoding.ASCII.GetBytes(x.ValorConstante);
+                    byteinstruccion = BitConverter.GetBytes(x.ValorConstante.Trim().Count());
+                    codigoCompleto.Add(byteinstruccion[0]);
+                    byte[] mensaje= Encoding.ASCII.GetBytes(x.ValorConstante.Trim());
                     for (i = 0; i < mensaje.Length; i++)
                     {
                         codigoCompleto.Add(mensaje[i]);
