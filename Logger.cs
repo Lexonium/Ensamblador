@@ -179,7 +179,12 @@ namespace AutomataEnsamblador
             foreach (var x in listaSegmentos)
             {
                 i = 0;
-                treintabytes = Encoding.ASCII.GetBytes(x.VariableName);
+                if (x.VariableName.Length < 30) {
+                    while (x.VariableName.Length < 30) {
+                        x.VariableName += '0';
+                    }
+                }
+                 treintabytes = Encoding.ASCII.GetBytes(x.VariableName);
                 for (i=0;i<treintabytes.Length;i++) {
                     tsnvEnBytes.Add(treintabytes[i]);
                 }
