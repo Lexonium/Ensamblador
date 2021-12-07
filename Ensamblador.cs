@@ -116,8 +116,8 @@ namespace AutomataEnsamblador
             reserved = new Dictionary<string, int>() { { "NOP", 1 }, { "ADD", 1 }, { "SUB", 1 }, { "MULT", 1 }, { "DIV", 1 }, { "MOD", 1 }, { "INC", 3 }, { "DEC", 3 }, { "CMPEQ", 1 },
                 { "CMPNE", 1 }, { "CMPLT", 1 }, { "CMPLE", 1 }, { "CMPGT", 1 }, { "CMPGE", 1 }, { "JMP", 3 }, { "JMPT", 3 }, { "JMPF", 3 }, { "SETIDX", 3 },
                 { "SETIDXK", 5 }, { "PUSHI", 3 }, { "PUSHD", 3 }, { "PUSHS" , 3 }, { "PUSHAI" , 3 }, { "PUSHAD" , 3 }, { "PUSHAS" , 3 }, { "PUSHKI" , 5 },
-                { "PUSHKD" , 9 }, { "PUSHKS" , 99+2 }, { "POPI" , 3 }, { "POPD" , 3 }, { "POPS" , 3 }, { "POPAI" , 3 }, { "POPAD" , 3 }, { "POPAS" , 3 },
-                { "POPIDX" , 1 }, { "READI" , 3 }, { "READD" , 3 }, { "READS" , 3 }, { "READAI" , 3 }, { "READAD" , 3 }, { "READAS" , 3 }, { "PRTM" , 99+2 },
+                { "PUSHKD" , 9 }, { "PUSHKS" , 2 }, { "POPI" , 3 }, { "POPD" , 3 }, { "POPS" , 3 }, { "POPAI" , 3 }, { "POPAD" , 3 }, { "POPAS" , 3 },
+                { "POPIDX" , 1 }, { "READI" , 3 }, { "READD" , 3 }, { "READS" , 3 }, { "READAI" , 3 }, { "READAD" , 3 }, { "READAS" , 3 }, { "PRTM" , 2 },
                 { "PRTI" , 3 }, { "PRTD" , 3 }, { "PRTS" , 3 }, { "PRTAI" , 3 }, { "PRTAD" , 3 }, { "PRTAS" , 3 }, { "HALT" , 1 } 
             };
             reservedwithCode = new Dictionary<string, int>() { { "NOP", 0 }, { "ADD", 1 }, { "SUB", 2 }, { "MULT", 3 }, { "DIV", 4 }, { "MOD", 5 }, { "INC", 6 }, { "DEC", 7 }, { "CMPEQ", 8 },
@@ -219,8 +219,11 @@ namespace AutomataEnsamblador
                                         }
                                     }
                                 }
-                                elementoCodigo.ValorConstante = mensaje.TrimStart('\"').TrimEnd('\"');
+                                mensaje = mensaje.TrimStart('\"').TrimEnd('\"');
+                                mensaje = mensaje.Trim();
+                                elementoCodigo.ValorConstante = mensaje;
                                 elementoCodigo.PesoComando = mensaje.Length;
+                                segCodigoSize+= mensaje.Length;
                                 mensaje = "";
                             };
                         }

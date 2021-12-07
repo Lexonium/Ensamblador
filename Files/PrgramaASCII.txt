@@ -1,9 +1,9 @@
-﻿DEFAI	MATRICULA,10	; Arreglo de matrículas
-DEFI	i	; Contador i
-DEFS	s	
-DEFAS	r,10	
-DEFAD	d,10	
-DEFD	doub	
+﻿DEFAI	MATRICULA,10	; Arreglo de matrículas 
+DEFI	i	; Contador i						
+DEFS	s										
+DEFAS	r,10									
+DEFAD	d,10									
+DEFD	doub									
 ; Inicializar contador i en cero		
 PRTM "MENSAJE CON ESPACIOS"
 PUSHKS "HOLA123" 
