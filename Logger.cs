@@ -8,7 +8,9 @@ namespace AutomataEnsamblador
 {
     public class Logger : ILogger
     {
-        string[] magicnumber = {"I", "C", "C", "T", "S", "N"};
+        string magicnumber = "ICCTSN";
+        public List<byte> codigoCompleto = new List<byte>();
+        public List<byte> tsnvEnBytes = new List<byte>();
         public void IsRepeatedWord(string word, ref HashSet<string> nombresVariables)
         {
             if (!nombresVariables.Add(word))
@@ -19,7 +21,7 @@ namespace AutomataEnsamblador
 
         public void LogToConsole(string message)
         {
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
         }
 
         public void PrintList(string message, List<string> list)
@@ -47,21 +49,24 @@ namespace AutomataEnsamblador
         }
         public void PrintMagicNumber()
         {
+            byte[] letrasmagic = new byte[6];
+            letrasmagic = Encoding.ASCII.GetBytes(magicnumber);
             int i = 0;
-            foreach (var x in magicnumber)
+            for(i=0;i<letrasmagic.Length;i++)
             {
-                Console.Write(magicnumber[i]);
-                i++;
+                codigoCompleto.Add(letrasmagic[i]);
             }
         }
-        public void PrintCodigodeTSN(List<ElementoSegmentoDeCodigo> listaSegmentos, int contadorTSN)
+        public void PrintCodigodeTSN(List<ElementoSegmentoDeCodigo> listaSegmentos,ref int contadorTSN)
         {
             int i = 0,xint;
             string losbytes;
+            byte[] byteinstruccion = new byte[1];
             bool tienevar = false, tieneconst = false;
             foreach (var x in listaSegmentos)
             {
-                Console.Write(x.NumeroDeCodigo);
+                byteinstruccion = BitConverter.GetBytes(x.NumeroDeCodigo);
+                codigoCompleto.Add(byteinstruccion[0]);
                 contadorTSN++;
                 if (x.NumeroDeCodigo != 27 && x.NumeroDeCodigo != 41)
                 {
@@ -74,11 +79,13 @@ namespace AutomataEnsamblador
                             string[] twobytes = new string[2];
                             byte[] dosbytes = new byte[2];
                             xint = Convert.ToInt32(x.DireccionVariable);
+                            dosbytes = BitConverter.GetBytes(xint);
                             for (i = 0; i < 2; i++)
                             {
-                                twobytes[i] = Convert.ToString(dosbytes[i]);
+                                codigoCompleto.Add(dosbytes[i]);
+                                //twobytes[i] = Convert.ToString(dosbytes[i]);
                             }
-                            losbytes = string.Join("", dosbytes);
+                            losbytes = string.Join("-", twobytes);
                             Console.Write(losbytes);
                             contadorTSN += 2;
                             break;
@@ -86,24 +93,28 @@ namespace AutomataEnsamblador
                             string[] fourbytes = new string[4];
                             byte[] cuatrobytes = new byte[4];
                             xint = Convert.ToInt32(x.ValorConstante);
+                            cuatrobytes = BitConverter.GetBytes(xint);
                             for (i = 0; i < cuatrobytes.Length; i++)
                             {
-                                fourbytes[i] = Convert.ToString(cuatrobytes[i]);
+                                codigoCompleto.Add(cuatrobytes[i]);
+                                //fourbytes[i] = Convert.ToString(cuatrobytes[i]);
                             }
-                            losbytes = string.Join("", fourbytes);
-                            Console.Write(losbytes);
+                           // losbytes = string.Join("-", fourbytes);
+                            //Console.Write(losbytes);
                             contadorTSN += 4;
                             break;
                         case 8:
                             string[] eightbytes = new string[8];
                             byte[] ochobytes = new byte[8];
                             xint = Convert.ToInt32(x.ValorConstante);
+                            ochobytes = BitConverter.GetBytes(xint);
                             for (i = 0; i < ochobytes.Length; i++)
                             {
-                                eightbytes[i] = Convert.ToString(ochobytes[i]);
+                                codigoCompleto.Add(ochobytes[i]);
+                                //eightbytes[i] = Convert.ToString(ochobytes[i]);
                             }
-                            losbytes = string.Join(" ", eightbytes);
-                            Console.Write(losbytes);
+                            //losbytes = string.Join("-", eightbytes);
+                            //Console.Write(losbytes);
                             contadorTSN += 8;
                             break;
                         default:
@@ -112,60 +123,92 @@ namespace AutomataEnsamblador
                 }
                 else
                 {
-                    if (x.DireccionVariable != null)
+                    //if (x.DireccionVariable != null)
+                    //{
+                    //    tienevar = true;
+                    //    tieneconst = false;
+                    //}
+                    //if (x.ValorConstante != null)
+                    //{
+                    //    tieneconst = true;
+                    //    tienevar = false;
+                    //}
+                    //for (i = 1; i < x.PesoComando; i++)
+                    //{
+                    //    Console.Write((i == x.PesoComando - 1 ? (tienevar == true ? x.DireccionVariable : (tieneconst == true) ? (double.TryParse(x.ValorConstante, out double num)) ? x.ValorConstante : x.ValorConstante.Length + x.ValorConstante : "") : ""));
+                    //    contadorTSN++;
+                    //}
+                    //tieneconst = false;
+                    //tienevar = false;
+                    byte[] mensaje= Encoding.ASCII.GetBytes(x.ValorConstante);
+                    for (i = 0; i < mensaje.Length; i++)
                     {
-                        tienevar = true;
-                        tieneconst = false;
-                    }
-                    if (x.ValorConstante != null)
-                    {
-                        tieneconst = true;
-                        tienevar = false;
-                    }
-                    for (i = 1; i < x.PesoComando; i++)
-                    {
-                        Console.Write((i == x.PesoComando - 1 ? (tienevar == true ? x.DireccionVariable : (tieneconst == true) ? (double.TryParse(x.ValorConstante, out double num)) ? x.ValorConstante : x.ValorConstante.Length + x.ValorConstante : "") : ""));
+                        codigoCompleto.Add(mensaje[i]);
                         contadorTSN++;
                     }
-                    tieneconst = false;
-                    tienevar = false;
                 }
             }
+        }
+        public void cambiarA2bytes(int numero)//, ref int contadorTSN) {
+        { 
+            int i;
+            string losbytes;
+            string[] twobytes = new string[2];
+            byte[] dosbytes = new byte[2];
+            dosbytes = BitConverter.GetBytes(numero);
+            for (i = 0; i < 2; i++)
+            {
+                codigoCompleto.Add(dosbytes[i]);
+                //twobytes[i] = Convert.ToString(dosbytes[i]);
+            }
+            //losbytes = string.Join("-", twobytes);
+            //Console.Write(losbytes);
+            //contadorTSN += 2;
         }
         public void PrintTSNV(List<ElementoSegmentoDeDatos> listaSegmentos)
         {
             int i = 0, temp;
             string[] thirtybytes = new string[30], twobytes = new string[2];
+            byte[] unbyte = new byte[1];
             byte[] treintabytes = new byte[30];
             byte[] dosbytes = new byte[2];
             string nombre, direccion, tipo, numelem, vs;
-            Console.Write(listaSegmentos.Count);
+            //Console.Write(listaSegmentos.Count);
+            unbyte = BitConverter.GetBytes(listaSegmentos.Count);
+            tsnvEnBytes.Add(unbyte[0]);
             foreach (var x in listaSegmentos)
             {
                 i = 0;
                 treintabytes = Encoding.ASCII.GetBytes(x.VariableName);
-                nombre = Encoding.ASCII.GetString(treintabytes);
-
-                direccion = string.Join("-",Convert.ToString(BitConverter.GetBytes(x.Direccion)[0]));
-                tipo = string.Join("-", Convert.ToString(BitConverter.GetBytes(x.VariableType)[0]));
-                temp = Convert.ToInt32(x.NumElementos);
-                dosbytes = BitConverter.GetBytes(temp);
-                for (i = 0; i < twobytes.Length; i++) {
-                    twobytes[i] = Convert.ToString(dosbytes[i]);
+                for (i=0;i<treintabytes.Length;i++) {
+                    tsnvEnBytes.Add(treintabytes[i]);
                 }
-                numelem = string.Join("-", twobytes);
-                temp = Convert.ToInt32(x.VectorString);
-                dosbytes = BitConverter.GetBytes(temp);
-                for (i = 0; i < twobytes.Length; i++)
+                dosbytes = BitConverter.GetBytes(x.Direccion);
+                for (i = 0; i < dosbytes.Length; i++)
                 {
-                    twobytes[i] = Convert.ToString(dosbytes[i]);
+                    tsnvEnBytes.Add(dosbytes[i]);
                 }
-                vs = string.Join("-", twobytes);
-                Console.Write(nombre + "");
-                Console.Write(direccion+"");
-                Console.Write(tipo + "");
-                Console.Write(numelem + "");
-                Console.Write(vs + "");
+                unbyte = BitConverter.GetBytes(x.VariableType);
+                tsnvEnBytes.Add(unbyte[0]);
+                dosbytes = BitConverter.GetBytes(Convert.ToInt32(x.NumElementos));
+                for (i = 0; i < dosbytes.Length; i++) {
+                    tsnvEnBytes.Add(dosbytes[i]);
+                }
+                dosbytes = BitConverter.GetBytes(Convert.ToInt32(x.VectorString));
+                for (i = 0; i < dosbytes.Length; i++)
+                {
+                    tsnvEnBytes.Add(dosbytes[i]);
+                }
+                //direccion = string.Join("-",Convert.ToString(BitConverter.GetBytes(x.Direccion)[0]));
+                //tipo = string.Join("-", Convert.ToString(BitConverter.GetBytes(x.VariableType)[0]));
+                //Console.Write(nombre + "");
+                //Console.Write(direccion + "");
+                //Console.Write(tipo + "");
+                //temp = Convert.ToInt32(x.NumElementos);
+                ////cambiarA2bytes(temp,ref temp);
+                //temp = Convert.ToInt32(x.VectorString);
+                ////cambiarA2bytes(temp, ref temp);
+                //dosbytes = BitConverter.GetBytes(temp);  
             }
         }
 

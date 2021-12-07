@@ -335,7 +335,7 @@ namespace AutomataEnsamblador
                         comentario += " " + word;
                     }
 
-                    log.LogToConsole(word);  //Escribe la palabra y pasa el renglon
+                    //log.LogToConsole(word);  //Escribe la palabra y pasa el renglon
                     yaLeido = false;
                     word = "";//resetea el string donde se acumulan los caracteres 
                     numDeCaracterActual = 0;//resetea contador de caracteres 
@@ -348,71 +348,70 @@ namespace AutomataEnsamblador
                 esComentario = false;
             }
 
-            log.PrintList("Se encontro la etiqueta: ", listaEtiquetas);
-            log.PrintList("Se encontro el comando: ", listaComandos);
-            log.PrintList("Se encontro la variable: ", listaVariables);
-            log.PrintList("Se encontro el comentario: ", listaComentarios);
+            //log.PrintList("Se encontro la etiqueta: ", listaEtiquetas);
+            //log.PrintList("Se encontro el comando: ", listaComandos);
+            //log.PrintList("Se encontro la variable: ", listaVariables);
+            //log.PrintList("Se encontro el comentario: ", listaComentarios);
 
-            log.PrintSegmentoDeDatos(segmentoDeDatos.Elementos);
-            log.PrintSegmentoDeCodigo(segmentoDeCodigo.Elementos);
-            Console.WriteLine("============================================================");
+            //log.PrintSegmentoDeDatos(segmentoDeDatos.Elementos);
+            //log.PrintSegmentoDeCodigo(segmentoDeCodigo.Elementos);
+            //Console.WriteLine("============================================================");
+
             log.PrintMagicNumber(); //IMPRIME EL MAGIC NUMBER
-            Console.Write(segCodigoSize); //IMPRIME EL TAMANO DEL SEG DE CODIGO
-            Console.Write(""); //IMPRIME EL SEGUNDO ESPACIO (SEG DE CODIGO SE SUPONE QUE SON 2 BYTES)
-            Console.Write(countDatos); //IMPREME CANTIDAD DE DATOS
-            Console.Write(""); //SEGUNDA LINEA CANTIDAD DE DATOS
-            Console.Write(countVS); // SE SUPONE QUE IMPRIME TAM DE VECTOR STRING(VECTOR STRING AUN NO IMPLEMENTADO)
-            Console.Write(""); //AQUI EMPEZAR A IMPRIMIR LO DEL CODIGO (VOY A HACERLO UN LOGGER METHOD)
-            log.PrintCodigodeTSN(segmentoDeCodigo.Elementos, contadorTSN);
+            log.cambiarA2bytes(segCodigoSize);//, ref contadorTSN);
+            log.cambiarA2bytes(countDatos);//, ref contadorTSN);
+            log.cambiarA2bytes(countVS);//, ref contadorTSN);
+            log.PrintCodigodeTSN(segmentoDeCodigo.Elementos, ref contadorTSN);
             log.PrintTSNV(segmentoDeDatos.Elementos);
-
+            byte[] arregloFinal = log.codigoCompleto.ToArray();
+            byte[] arregloTSNV = log.tsnvEnBytes.ToArray();
+            File.WriteAllBytes("./output2.tsn", arregloFinal);
+            File.WriteAllBytes("./output2.tsnv", arregloTSNV);
 
 
             file.Close(); //cierra el archivo a leer
-            FileStream ostrm;
-            StreamWriter writer;
-            TextWriter oldOut = Console.Out;
-            try
-            {
-                ostrm = new FileStream("./output.tsn", FileMode.OpenOrCreate, FileAccess.Write);
-                writer = new StreamWriter(ostrm);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Cannot open Redirect.txt for writing");
-                Console.WriteLine(e.Message);
-                return;
-            } 
-            Console.SetOut(writer);
-            log.PrintMagicNumber(); //IMPRIME EL MAGIC NUMBER
-            Console.Write(segCodigoSize); //IMPRIME EL TAMANO DEL SEG DE CODIGO
-            Console.Write(""); //IMPRIME EL SEGUNDO ESPACIO (SEG DE CODIGO SE SUPONE QUE SON 2 BYTES)
-            Console.Write(countDatos); //IMPREME CANTIDAD DE DATOS
-            Console.Write(""); //SEGUNDA LINEA CANTIDAD DE DATOS
-            Console.Write(0); // SE SUPONE QUE IMPRIME TAM DE VECTOR STRING(VECTOR STRING AUN NO IMPLEMENTADO)
-            Console.Write(""); //AQUI EMPEZAR A IMPRIMIR LO DEL CODIGO (VOY A HACERLO UN LOGGER METHOD)
-            log.PrintCodigodeTSN(segmentoDeCodigo.Elementos, contadorTSN);
-            Console.SetOut(oldOut);
-            writer.Close();
-            ostrm.Close();
-            Console.WriteLine("Done");
-            try
-            {
-                ostrm = new FileStream("./output.tsnv", FileMode.OpenOrCreate, FileAccess.Write);
-                writer = new StreamWriter(ostrm);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Cannot open Redirect.txt for writing");
-                Console.WriteLine(e.Message);
-                return;
-            }
-            Console.SetOut(writer);
-            log.PrintTSNV(segmentoDeDatos.Elementos);
-            Console.SetOut(oldOut);
-            writer.Close();
-            ostrm.Close();
-            Console.WriteLine("Done");
+
+            //FileStream ostrm;
+            //StreamWriter writer;
+            //TextWriter oldOut = Console.Out;
+            //try
+            //{
+            //    ostrm = new FileStream("./output.tsn", FileMode.OpenOrCreate, FileAccess.Write);
+            //    writer = new StreamWriter(ostrm);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("Cannot open Redirect.txt for writing");
+            //    Console.WriteLine(e.Message);
+            //    return;
+            //} 
+            //Console.SetOut(writer);
+            //log.PrintMagicNumber(); //IMPRIME EL MAGIC NUMBER
+            //log.cambiarA2bytes(segCodigoSize, ref contadorTSN);
+            //log.cambiarA2bytes(countDatos, ref contadorTSN);
+            //log.cambiarA2bytes(countVS, ref contadorTSN);
+            //log.PrintCodigodeTSN(segmentoDeCodigo.Elementos, ref contadorTSN);
+            //Console.SetOut(oldOut);
+            //writer.Close();
+            //ostrm.Close();
+            //Console.WriteLine("Done");
+            //try
+            //{
+            //    ostrm = new FileStream("./output.tsnv", FileMode.OpenOrCreate, FileAccess.Write);
+            //    writer = new StreamWriter(ostrm);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("Cannot open Redirect.txt for writing");
+            //    Console.WriteLine(e.Message);
+            //    return;
+            //}
+            //Console.SetOut(writer);
+            //log.PrintTSNV(segmentoDeDatos.Elementos);
+            //Console.SetOut(oldOut);
+            //writer.Close();
+            //ostrm.Close();
+            //Console.WriteLine("Done");
         }
     }
 }
