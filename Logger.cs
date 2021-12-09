@@ -123,23 +123,6 @@ namespace AutomataEnsamblador
                 }
                 else
                 {
-                    //if (x.DireccionVariable != null)
-                    //{
-                    //    tienevar = true;
-                    //    tieneconst = false;
-                    //}
-                    //if (x.ValorConstante != null)
-                    //{
-                    //    tieneconst = true;
-                    //    tienevar = false;
-                    //}
-                    //for (i = 1; i < x.PesoComando; i++)
-                    //{
-                    //    Console.Write((i == x.PesoComando - 1 ? (tienevar == true ? x.DireccionVariable : (tieneconst == true) ? (double.TryParse(x.ValorConstante, out double num)) ? x.ValorConstante : x.ValorConstante.Length + x.ValorConstante : "") : ""));
-                    //    contadorTSN++;
-                    //}
-                    //tieneconst = false;
-                    //tienevar = false;
                     byteinstruccion = BitConverter.GetBytes(x.ValorConstante.Trim().Count());
                     codigoCompleto.Add(byteinstruccion[0]);
                     byte[] mensaje= Encoding.ASCII.GetBytes(x.ValorConstante.Trim());

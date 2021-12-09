@@ -39,7 +39,7 @@ namespace AutomataEnsamblador
         StreamReader file;
 
 
-        public Ensamblador()
+        public Ensamblador(string args)
         {
             log = new Logger();
             countVS = 0;
@@ -82,10 +82,9 @@ namespace AutomataEnsamblador
 
             segmentoDeDatos = new SegmentoDeDatos();
             segmentoDeCodigo = new SegmentoDeCodigo();
-
             #region paths
-
-                string[] nombreArgs = { "ComandosDefine", "ComandosSinVariable", "Comandos", "ComandosGlobales", "CMDConVarConst" };
+            List<string> valores1 = new List<string>();
+            string[] TiposComando = { "ComandosDefine", "ComandosSinVariable", "Comandos", "ComandosGlobales", "CMDConVarConst" };
                 List<HashSet<string>> hashList = new List<HashSet<string>>();
                 hashList.Add(comandosDefine);
                 hashList.Add(comandosSinVariable);
@@ -93,23 +92,42 @@ namespace AutomataEnsamblador
                 hashList.Add(comandosGlobales);
                 hashList.Add(comandosVarConst);
 
-                foreach (var x in nombreArgs)
+            try{
+                foreach (var x in TiposComando)
                 {
-                    for (int i = 0; i < nombreArgs.Length; i++)
+                    for (int i = 0; i < TiposComando.Length; i++)
                     {
-                        var comandos = Environment.GetEnvironmentVariable(nombreArgs[i]);
-                        string[] valores = comandos.Split(",");
-                        foreach (var y in valores)
+                        string comandos="";
+                        comandos = Environment.GetEnvironmentVariable(TiposComando[i]);
+                        try
                         {
-                            hashList[i].Add(y);
+                            if (comandos != null)
+                            {
+                                valores1 = comandos.Split(",").ToList();
+                                foreach (var y in valores1)
+                                {
+                                    hashList[i].Add(y);
+                                }
+                            }
                         }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("foreach: " + e.Message);
+                        }
+    
+                       
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("For: "+ e.Message);
+            }
 
                 hashList.Clear();
 
                 //Archivo de programa
-                file = new StreamReader(PathRepository.CrearPath(@"\Files\PrgramaASCII.txt"));
+                file = new StreamReader(PathRepository.CrearPath(args));//args
 
             #endregion
 
@@ -118,14 +136,14 @@ namespace AutomataEnsamblador
                 { "SETIDXK", 5 }, { "PUSHI", 3 }, { "PUSHD", 3 }, { "PUSHS" , 3 }, { "PUSHAI" , 3 }, { "PUSHAD" , 3 }, { "PUSHAS" , 3 }, { "PUSHKI" , 5 },
                 { "PUSHKD" , 9 }, { "PUSHKS" , 2 }, { "POPI" , 3 }, { "POPD" , 3 }, { "POPS" , 3 }, { "POPAI" , 3 }, { "POPAD" , 3 }, { "POPAS" , 3 },
                 { "POPIDX" , 1 }, { "READI" , 3 }, { "READD" , 3 }, { "READS" , 3 }, { "READAI" , 3 }, { "READAD" , 3 }, { "READAS" , 3 }, { "PRTM" , 2 },
-                { "PRTI" , 3 }, { "PRTD" , 3 }, { "PRTS" , 3 }, { "PRTAI" , 3 }, { "PRTAD" , 3 }, { "PRTAS" , 3 }, { "HALT" , 1 } 
+                { "PRTI" , 3 }, { "PRTD" , 3 }, { "PRTS" , 3 }, { "PRTAI" , 3 }, { "PRTAD" , 3 }, { "PRTAS" , 3 }, {"NL",1 },{ "HALT" , 1 } 
             };
             reservedwithCode = new Dictionary<string, int>() { { "NOP", 0 }, { "ADD", 1 }, { "SUB", 2 }, { "MULT", 3 }, { "DIV", 4 }, { "MOD", 5 }, { "INC", 6 }, { "DEC", 7 }, { "CMPEQ", 8 },
                 { "CMPNE", 9 }, { "CMPLT", 10 }, { "CMPLE", 11 }, { "CMPGT", 12 }, { "CMPGE", 13 }, { "JMP", 14 }, { "JMPT", 15 }, { "JMPF", 16 }, { "SETIDX", 17 },
                 { "SETIDXK", 18 }, { "PUSHI", 19 }, { "PUSHD", 20 }, { "PUSHS" , 21 }, { "PUSHAI" , 22 }, { "PUSHAD" , 23 }, { "PUSHAS" , 24 }, { "PUSHKI" , 25 },
                 { "PUSHKD" , 26 }, { "PUSHKS" , 27 }, { "POPI" , 28 }, { "POPD" , 29 }, { "POPS" , 30 }, { "POPAI" , 31 }, { "POPAD" , 32 }, { "POPAS" , 33 },
                 { "POPIDX" , 34 }, { "READI" , 35 }, { "READD" , 36 }, { "READS" , 37 }, { "READAI" , 38 }, { "READAD" , 39 }, { "READAS" , 40 }, { "PRTM" , 41 },
-                { "PRTI" , 42 }, { "PRTD" , 43 }, { "PRTS" , 44 }, { "PRTAI" , 45 }, { "PRTAD" , 46 }, { "PRTAS" , 47 }, { "HALT" , 48 }
+                { "PRTI" , 42 }, { "PRTD" , 43 }, { "PRTS" , 44 }, { "PRTAI" , 45 }, { "PRTAD" , 46 }, { "PRTAS" , 47 }, {"NL",48 }, { "HALT" , 49 }
             };
             etiquetas = new Dictionary<string, int>();
         }
@@ -138,7 +156,6 @@ namespace AutomataEnsamblador
 
             while ((line = file.ReadLine()) != null)
             {
-                //Console.WriteLine(line);
                 foreach (string linea in line.Split()) //Foreach que divide el documento en lineas de strings
                 {
                     for (int i = 0; i < linea.Length; i++, numDeCaracterActual++) //For para dividir las palabras en letras
@@ -148,7 +165,7 @@ namespace AutomataEnsamblador
                     }
 
                     WordRepository.EsComentario(ref esComentario, ref yaLeido, word);
-                    WordRepository.EsEtiqueta(esComentario, ref yaLeido, word, ref listaEtiquetas, ref etiquetas, ref countLinea);
+                    WordRepository.EsEtiqueta(esComentario, ref yaLeido, word, ref listaEtiquetas, ref etiquetas, ref segCodigoSize);
 
 
                     //Se agrega la nueva variable al hashset de variable.
@@ -234,14 +251,11 @@ namespace AutomataEnsamblador
                             {
                                 throw new CustomException("The instance variable " + word + " was not defined.");
                             }
-                            //if (etiquetas!=null)
-                            //{
                             if (etiquetas.ContainsKey(word + ":"))
                             {
                                 var elementoCodigo = segmentoDeCodigo.Elementos.Last();
                                 elementoCodigo.DireccionVariable = etiquetas[word + ":"];
                             }
-                            // }
                             else
                             {
                                 if (esVariable)
@@ -289,7 +303,6 @@ namespace AutomataEnsamblador
                         //Si es un comando de define
                         if (word.Contains("DEF"))
                         {
-                            //cambiar esto a futuro, que sea una tupla
                             esVariable = CommandRepository.VariableDefine(word, comandos1Var, countLinea, ref segmentoDeDatos, ref countDatos, ref countVS);
                             skipStatement = false;
                         }
@@ -331,14 +344,12 @@ namespace AutomataEnsamblador
                         yaLeido = true;
                     }
 
-                    //WordRepository.TieneComa(esComentario, ref yaLeido, word, ref listaVariables, numVariables, linea);
+                    
 
                     if (esComentario)
                     {
                         comentario += " " + word;
                     }
-
-                    //log.LogToConsole(word);  //Escribe la palabra y pasa el renglon
                     yaLeido = false;
                     word = "";//resetea el string donde se acumulan los caracteres 
                     numDeCaracterActual = 0;//resetea contador de caracteres 
@@ -350,15 +361,6 @@ namespace AutomataEnsamblador
                 comentario = "";
                 esComentario = false;
             }
-
-            //log.PrintList("Se encontro la etiqueta: ", listaEtiquetas);
-            //log.PrintList("Se encontro el comando: ", listaComandos);
-            //log.PrintList("Se encontro la variable: ", listaVariables);
-            //log.PrintList("Se encontro el comentario: ", listaComentarios);
-
-            //log.PrintSegmentoDeDatos(segmentoDeDatos.Elementos);
-            //log.PrintSegmentoDeCodigo(segmentoDeCodigo.Elementos);
-            //Console.WriteLine("============================================================");
 
             log.PrintMagicNumber(); //IMPRIME EL MAGIC NUMBER
             log.cambiarA2bytes(segCodigoSize);//, ref contadorTSN);
@@ -373,48 +375,6 @@ namespace AutomataEnsamblador
 
 
             file.Close(); //cierra el archivo a leer
-
-            //FileStream ostrm;
-            //StreamWriter writer;
-            //TextWriter oldOut = Console.Out;
-            //try
-            //{
-            //    ostrm = new FileStream("./output.tsn", FileMode.OpenOrCreate, FileAccess.Write);
-            //    writer = new StreamWriter(ostrm);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("Cannot open Redirect.txt for writing");
-            //    Console.WriteLine(e.Message);
-            //    return;
-            //} 
-            //Console.SetOut(writer);
-            //log.PrintMagicNumber(); //IMPRIME EL MAGIC NUMBER
-            //log.cambiarA2bytes(segCodigoSize, ref contadorTSN);
-            //log.cambiarA2bytes(countDatos, ref contadorTSN);
-            //log.cambiarA2bytes(countVS, ref contadorTSN);
-            //log.PrintCodigodeTSN(segmentoDeCodigo.Elementos, ref contadorTSN);
-            //Console.SetOut(oldOut);
-            //writer.Close();
-            //ostrm.Close();
-            //Console.WriteLine("Done");
-            //try
-            //{
-            //    ostrm = new FileStream("./output.tsnv", FileMode.OpenOrCreate, FileAccess.Write);
-            //    writer = new StreamWriter(ostrm);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine("Cannot open Redirect.txt for writing");
-            //    Console.WriteLine(e.Message);
-            //    return;
-            //}
-            //Console.SetOut(writer);
-            //log.PrintTSNV(segmentoDeDatos.Elementos);
-            //Console.SetOut(oldOut);
-            //writer.Close();
-            //ostrm.Close();
-            //Console.WriteLine("Done");
         }
     }
 }
