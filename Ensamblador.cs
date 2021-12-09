@@ -11,7 +11,7 @@ namespace AutomataEnsamblador
     {
         Logger log;
         int numDeCaracterActual, //contador para saber en que caracter de la palabra estan
-            direccion, numVariables, countLinea, countDatos, segCodigoSize, contadorTSN,countVS;
+            direccion, numVariables, countLinea, countDatos, segCodigoSize, contadorTSN, countVS;
         bool esComentario, yaLeido, sigconst, comienzaCadena;
         string line;
         string word, comentario, mensaje;
@@ -37,6 +37,14 @@ namespace AutomataEnsamblador
 
         // Read the file and display it line by line.
         StreamReader file;
+        string[] DefineComandos = new string[] { "DEFI", "DEFD", "DEFS", "DEFAI", "DEFAD", "DEFAS" };
+        string[] SinVariableComandos = new string[] { "NOP", "ADD", "SUB", "MULT", "DIV", "MOD", "CMPEQ", "CMPNE", "CMPLT", "CMPLE", "CMPGT", "CMPGE", "POPIDX", "HALT" };
+        string[] Comandos = new string[] { "INC", "DEC", "JMP", "JMPT", "JMPF", "SETIDX", "SETIDXK", "PUSHI", "PUSHD", "PUSHS", "PUSHAI", "PUSHAD", "PUSHAS", "PUSHKI", "PUSHKD", "PUSHKS", "POPI", "POPD", "POPS", "POPAI", "POPAD", "POPAS", "READI", "READD", "READS", "READAI", "READAD", "READAS", "PRTM", "PRTI", "PRTD", "PRTS", "PRTAI", "PRTAD", "PRTAS" };
+        string[] GlobalesComandos = new string[] { "INC", "DEC", "JMP", "JMPT", "JMPF", "SETIDX", "SETIDXK", "PUSHI", "PUSHD", "PUSHS", "PUSHAI", "PUSHAD", "PUSHAS", "PUSHKI", "PUSHKD", "PUSHKS", "POPI", "POPD", "POPS", "POPAI", "POPAD", "POPAS", "READI", "READD", "READS", "READAI", "READAD", "READAS", "PRTM",
+            "PRTI", "PRTD", "PRTS", "PRTAI", "PRTAD", "PRTAS", "NOP","ADD", "SUB", "MULT", "DIV", "MOD", "CMPEQ", "CMPNE", "CMPLT", "CMPLE",
+            "CMPGT", "CMPGE", "POPIDX", "HALT", "DEFI", "DEFD", "DEFS","DEFAI", "DEFAD", "DEFAS" };
+        string[] ConVarConstComandos = new string[] { "PUSHKI", "PUSHKD", "PUSHKS", "PRTM", "SETIDXK" };
+
 
 
         public Ensamblador(string args)
@@ -83,51 +91,76 @@ namespace AutomataEnsamblador
             segmentoDeDatos = new SegmentoDeDatos();
             segmentoDeCodigo = new SegmentoDeCodigo();
             #region paths
-            List<string> valores1 = new List<string>();
-            string[] TiposComando = { "ComandosDefine", "ComandosSinVariable", "Comandos", "ComandosGlobales", "CMDConVarConst" };
-                List<HashSet<string>> hashList = new List<HashSet<string>>();
-                hashList.Add(comandosDefine);
-                hashList.Add(comandosSinVariable);
-                hashList.Add(comandosEnsamblador);
-                hashList.Add(comandosGlobales);
-                hashList.Add(comandosVarConst);
 
-            try{
-                foreach (var x in TiposComando)
+            string[] TiposComando = { "ComandosDefine", "ComandosSinVariable", "Comandos", "ComandosGlobales", "CMDConVarConst" };
+            List<HashSet<string>> hashList = new List<HashSet<string>>();
+            hashList.Add(comandosDefine);
+            hashList.Add(comandosSinVariable);
+            hashList.Add(comandosEnsamblador);
+            hashList.Add(comandosGlobales);
+            hashList.Add(comandosVarConst);
+
+            foreach (var x in TiposComando)
+            {
+                for (int i = 0; i < TiposComando.Length; i++)
                 {
-                    for (int i = 0; i < TiposComando.Length; i++)
+                    string comandos = TiposComando[i];
+
+                    switch (comandos)
                     {
-                        string comandos="";
-                        comandos = Environment.GetEnvironmentVariable(TiposComando[i]);
-                        try
-                        {
-                            if (comandos != null)
+                        case "ComandosDefine":
                             {
-                                valores1 = comandos.Split(",").ToList();
-                                foreach (var y in valores1)
+                                foreach (var y in DefineComandos)
                                 {
                                     hashList[i].Add(y);
                                 }
+                                break;
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("foreach: " + e.Message);
-                        }
-    
-                       
+                        case "ComandosSinVariable":
+                            {
+                                foreach (var y in SinVariableComandos)
+                                {
+                                    hashList[i].Add(y);
+                                }
+                                break;
+                            }
+                        case "Comandos":
+                            {
+                                foreach (var y in Comandos)
+                                {
+                                    hashList[i].Add(y);
+                                }
+                                break;
+                            }
+                        case "ComandosGlobales":
+                            {
+                                foreach (var y in GlobalesComandos)
+                                {
+                                    hashList[i].Add(y);
+                                }
+                                break;
+                            }
+                        case "CMDConVarConst":
+                            {
+                                foreach (var y in ConVarConstComandos)
+                                {
+                                    hashList[i].Add(y);
+                                }
+                                break;
+                            }
+                        default:
+                            {
+                                break;
+                            }
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("For: "+ e.Message);
-            }
 
-                hashList.Clear();
 
-                //Archivo de programa
-                file = new StreamReader(PathRepository.CrearPath(args));//args
+            hashList.Clear();
+
+            //Archivo de programa
+            file = new StreamReader(PathRepository.CrearPath(args));//args
 
             #endregion
 
@@ -136,7 +169,7 @@ namespace AutomataEnsamblador
                 { "SETIDXK", 5 }, { "PUSHI", 3 }, { "PUSHD", 3 }, { "PUSHS" , 3 }, { "PUSHAI" , 3 }, { "PUSHAD" , 3 }, { "PUSHAS" , 3 }, { "PUSHKI" , 5 },
                 { "PUSHKD" , 9 }, { "PUSHKS" , 2 }, { "POPI" , 3 }, { "POPD" , 3 }, { "POPS" , 3 }, { "POPAI" , 3 }, { "POPAD" , 3 }, { "POPAS" , 3 },
                 { "POPIDX" , 1 }, { "READI" , 3 }, { "READD" , 3 }, { "READS" , 3 }, { "READAI" , 3 }, { "READAD" , 3 }, { "READAS" , 3 }, { "PRTM" , 2 },
-                { "PRTI" , 3 }, { "PRTD" , 3 }, { "PRTS" , 3 }, { "PRTAI" , 3 }, { "PRTAD" , 3 }, { "PRTAS" , 3 }, {"NL",1 },{ "HALT" , 1 } 
+                { "PRTI" , 3 }, { "PRTD" , 3 }, { "PRTS" , 3 }, { "PRTAI" , 3 }, { "PRTAD" , 3 }, { "PRTAS" , 3 }, {"NL",1 },{ "HALT" , 1 }
             };
             reservedwithCode = new Dictionary<string, int>() { { "NOP", 0 }, { "ADD", 1 }, { "SUB", 2 }, { "MULT", 3 }, { "DIV", 4 }, { "MOD", 5 }, { "INC", 6 }, { "DEC", 7 }, { "CMPEQ", 8 },
                 { "CMPNE", 9 }, { "CMPLT", 10 }, { "CMPLE", 11 }, { "CMPGT", 12 }, { "CMPGE", 13 }, { "JMP", 14 }, { "JMPT", 15 }, { "JMPF", 16 }, { "SETIDX", 17 },
@@ -193,7 +226,8 @@ namespace AutomataEnsamblador
                             int elem = int.Parse(arrays[1].ToString());
                             elemento.NumElementos = elem;
                             elemento.Peso *= elem;
-                            if (elemento.VariableType == 13) {
+                            if (elemento.VariableType == 13)
+                            {
                                 elemento.VectorString = countVS;
                                 countVS += elem;
                             }
@@ -214,16 +248,19 @@ namespace AutomataEnsamblador
                     }
 
                     //If a command is entered and it needs an operand (variable/constant) go in here
-                    if (skipStatement && yaLeido==false)
+                    if (skipStatement && yaLeido == false)
                     {
                         if (word.Contains("\""))
                         {
                             var elementoCodigo = segmentoDeCodigo.Elementos.Last();
-                            if (elementoCodigo.CommandName == "PRTM" || elementoCodigo.CommandName=="PUSHKS")
+                            if (elementoCodigo.CommandName == "PRTM" || elementoCodigo.CommandName == "PUSHKS")
                             {
-                                foreach (string pal in line.Split()) {
-                                    if (pal != "") {
-                                        if (comienzaCadena) {
+                                foreach (string pal in line.Split())
+                                {
+                                    if (pal != "")
+                                    {
+                                        if (comienzaCadena)
+                                        {
                                             mensaje += " " + pal;
                                         }
                                         if (pal[0] == '"')
@@ -231,7 +268,8 @@ namespace AutomataEnsamblador
                                             comienzaCadena = true;
                                             mensaje += pal.TrimStart('\"');
                                         }
-                                        if (pal[pal.Length - 1] == '"') {
+                                        if (pal[pal.Length - 1] == '"')
+                                        {
                                             comienzaCadena = false;
                                         }
                                     }
@@ -240,7 +278,7 @@ namespace AutomataEnsamblador
                                 mensaje = mensaje.Trim();
                                 elementoCodigo.ValorConstante = mensaje;
                                 elementoCodigo.PesoComando = mensaje.Length;
-                                segCodigoSize+= mensaje.Length;
+                                segCodigoSize += mensaje.Length;
                                 mensaje = "";
                             };
                         }
@@ -313,7 +351,7 @@ namespace AutomataEnsamblador
                             elemCodigo.CommandName = word;
                             elemCodigo.DireccionComando = segCodigoSize;
                             elemCodigo.PesoComando = reserved.Where(x => x.Key == word).Select(y => y.Value).FirstOrDefault();
-                            elemCodigo.NumeroDeCodigo= reservedwithCode.Where(x => x.Key == word).Select(y => y.Value).FirstOrDefault();
+                            elemCodigo.NumeroDeCodigo = reservedwithCode.Where(x => x.Key == word).Select(y => y.Value).FirstOrDefault();
                             segmentoDeCodigo.Elementos.Add(elemCodigo);
                             if (word.Contains("PUSHK"))
                             {
@@ -323,11 +361,13 @@ namespace AutomataEnsamblador
                             {
                                 esVariable = true;
                                 skipStatement = true;
-                            } else if(comandosSinVariable.Contains(word))
+                            }
+                            else if (comandosSinVariable.Contains(word))
                             {
                                 esVariable = false;
                                 skipStatement = true;
-                            } else if (comandosVarConst.Contains(word))
+                            }
+                            else if (comandosVarConst.Contains(word))
                             {
                                 stackCommand = word;
                             }
@@ -344,7 +384,7 @@ namespace AutomataEnsamblador
                         yaLeido = true;
                     }
 
-                    
+
 
                     if (esComentario)
                     {
