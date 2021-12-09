@@ -21,7 +21,6 @@ C:\Users\Andy\source\repos\AutomataEnsamblador\bin\Debug\net5.0\AutomataEnsambla
 C:\Users\Andy\source\repos\AutomataEnsamblador\bin\Debug\net5.0\AutomataEnsamblador.dll
 C:\Users\Andy\source\repos\AutomataEnsamblador\bin\Debug\net5.0\ref\AutomataEnsamblador.dll
 C:\Users\Andy\source\repos\AutomataEnsamblador\bin\Debug\net5.0\AutomataEnsamblador.pdb
-C:\Users\Andy\source\repos\AutomataEnsamblador\obj\Debug\net5.0\AutomataEnsamblador.csproj.AssemblyReference.cache
 C:\Users\Andy\source\repos\AutomataEnsamblador\obj\Debug\net5.0\AutomataEnsamblador.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Andy\source\repos\AutomataEnsamblador\obj\Debug\net5.0\AutomataEnsamblador.AssemblyInfoInputs.cache
 C:\Users\Andy\source\repos\AutomataEnsamblador\obj\Debug\net5.0\AutomataEnsamblador.AssemblyInfo.cs

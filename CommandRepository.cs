@@ -26,7 +26,6 @@ namespace AutomataEnsamblador
                     else
                     {
                         elemento.Direccion = countDatos + 1;
-                        //countDatos += elemento.Peso;
                     }
                     countDatos += elemento.Peso;
                     segmentoDatos.Elementos.Add(elemento);
@@ -43,7 +42,6 @@ namespace AutomataEnsamblador
                     else
                     {
                         elemento.Direccion = countDatos + 1;
-                        //countDatos += elemento.Peso;
                     }
                     countDatos += elemento.Peso;
                     segmentoDatos.Elementos.Add(elemento);
@@ -61,7 +59,6 @@ namespace AutomataEnsamblador
                     else
                     {
                         elemento.Direccion = countDatos + 1;
-                        //countDatos += elemento.Peso;
                     }
                     countDatos += elemento.Peso;
                     segmentoDatos.Elementos.Add(elemento);
